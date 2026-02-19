@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller de Ingeniería Aplicada N.º 1 — Diagramas Visuales</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #39ff14;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --border: rgba(0,212,255,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    padding: 2rem;
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse at 20% 50%, rgba(0,212,255,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(255,107,53,0.04) 0%, transparent 60%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header .sub {
+    color: var(--muted);
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 300;
+  }
+
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 0.5rem;
+  }
+
+  .section h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.4rem;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── RJ-45 T568B DIAGRAM ─── */
+  .rj45-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .connector-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .connector-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* RJ45 connector SVG style representation */
+  .rj45-svg-area {
+    position: relative;
+  }
+
+  .pin-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .pin-table thead th {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 0.5rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+  }
+
+  .pin-table tbody tr {
+    transition: background 0.15s;
+  }
+
+  .pin-table tbody tr:hover {
+    background: rgba(0,212,255,0.05);
+  }
+
+  .pin-table tbody td {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .pin-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: bold;
+    color: var(--text);
+    font-size: 1rem;
+  }
+
+  .color-dot {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 8px;
+    border: 2px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+  }
+
+  .color-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  .pair-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+
+  .function-text {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* Connector visual */
+  .connector-visual {
+    position: relative;
+    width: 200px;
+  }
+
+  .rj45-body {
+    width: 180px;
+    height: 100px;
+    background: linear-gradient(145deg, #2a3550, #1a2235);
+    border-radius: 8px 8px 4px 4px;
+    border: 2px solid rgba(0,212,255,0.3);
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 6px;
+    box-shadow: 0 0 20px rgba(0,212,255,0.1);
+  }
+
+  .rj45-clip {
+    width: 40px;
+    height: 20px;
+    background: linear-gradient(145deg, #1a2235, #0f1828);
+    border-radius: 0 0 6px 6px;
+    position: absolute;
+    bottom: -12px;
+    border: 1px solid rgba(0,212,255,0.2);
+    border-top: none;
+  }
+
+  .pins-row {
+    display: flex;
+    gap: 3px;
+    padding: 4px 8px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 4px;
+    width: 90%;
+    justify-content: center;
+  }
+
+  .pin-visual {
+    width: 14px;
+    height: 28px;
+    border-radius: 2px 2px 0 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+
+  .front-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 1rem;
+    letter-spacing: 0.1em;
+  }
+
+  .pin-numbers {
+    display: flex;
+    gap: 3px;
+    padding: 2px 8px;
+    width: 90%;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .pin-number-label {
+    width: 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.45rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ─── INFRASTRUCTURE DIAGRAM ─── */
+  .infra-diagram {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .diagram-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+
+  .node {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1.2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 110px;
+    position: relative;
+  }
+
+  .node .node-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .node.good { border-color: rgba(57,255,20,0.4); color: var(--accent3); }
+  .node.bad { border-color: rgba(255,107,53,0.5); color: var(--accent2); }
+  .node.neutral { border-color: var(--border); color: var(--text); }
+
+  .cable-line {
+    flex: 1;
+    height: 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .cable-utp {
+    background: linear-gradient(90deg, #ff6b35, #ff8c69);
+    height: 4px;
+    width: 100%;
+    position: relative;
+  }
+
+  .cable-fiber {
+    background: linear-gradient(90deg, var(--accent), #0099cc);
+    height: 4px;
+    width: 100%;
+    box-shadow: 0 0 8px rgba(0,212,255,0.5);
+  }
+
+  .cable-label {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    white-space: nowrap;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .cable-label.bad {
+    background: rgba(255,107,53,0.15);
+    color: var(--accent2);
+    border: 1px solid rgba(255,107,53,0.3);
+  }
+
+  .cable-label.good {
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+
+  .warning-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(255,107,53,0.1);
+    border: 1px solid rgba(255,107,53,0.3);
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    font-family: 'Share Tech Mono', monospace;
+    margin: 0.25rem;
+  }
+
+  .success-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(57,255,20,0.08);
+    border: 1px solid rgba(57,255,20,0.3);
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    color: var(--accent3);
+    font-family: 'Share Tech Mono', monospace;
+    margin: 0.25rem;
+  }
+
+  .vs-arrow {
+    font-size: 1.5rem;
+    color: var(--muted);
+    padding: 0 1rem;
+    text-align: center;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .comparison-card {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 1.2rem;
+    border: 1px solid;
+  }
+
+  .comparison-card.rejected {
+    border-color: rgba(255,107,53,0.3);
+  }
+  .comparison-card.chosen {
+    border-color: rgba(57,255,20,0.4);
+    position: relative;
+  }
+
+  .comparison-card.chosen::after {
+    content: '✓ ELEGIDO';
+    position: absolute;
+    top: -10px;
+    right: 12px;
+    background: var(--accent3);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.1em;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .comparison-card h3 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .comparison-card.rejected h3 { color: var(--accent2); }
+  .comparison-card.chosen h3 { color: var(--accent3); }
+
+  .comparison-card ul {
+    list-style: none;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .comparison-card ul li {
+    padding: 0.25rem 0;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .comparison-card ul li::before {
+    flex-shrink: 0;
+  }
+
+  .comparison-card.rejected ul li::before { content: '✗'; color: var(--accent2); }
+  .comparison-card.chosen ul li::before { content: '✓'; color: var(--accent3); }
+
+  /* ─── PROTOCOL DIAGRAM ─── */
+  .protocol-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .protocol-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .protocol-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .protocol-card.udp::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+  .protocol-card.tcp::before { background: linear-gradient(90deg, var(--accent), #0099cc); }
+
+  .protocol-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+
+  .protocol-card.udp .protocol-name { color: #a78bfa; }
+  .protocol-card.tcp .protocol-name { color: var(--accent); }
+
+  .protocol-use-case {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+
+  .packet-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 1rem 0;
+  }
+
+  .packet {
+    height: 28px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .packet.sent {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: var(--accent);
+  }
+
+  .packet.lost {
+    background: rgba(255,107,53,0.1);
+    border: 1px dashed rgba(255,107,53,0.3);
+    color: rgba(255,107,53,0.5);
+    text-decoration: line-through;
+  }
+
+  .packet.acked {
+    background: rgba(57,255,20,0.08);
+    border: 1px solid rgba(57,255,20,0.2);
+    color: var(--accent3);
+  }
+
+  .packet.retx {
+    background: rgba(57,255,20,0.05);
+    border: 1px dashed rgba(57,255,20,0.3);
+    color: rgba(57,255,20,0.7);
+    font-style: italic;
+  }
+
+  .flow-arrow {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* ─── BANDWIDTH VS LATENCY ─── */
+  .highway-diagram {
+    position: relative;
+    padding: 1.5rem;
+    background: var(--surface2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .highway {
+    height: 60px;
+    background: #1a2a1a;
+    border-radius: 4px;
+    border: 2px solid #2a4a2a;
+    position: relative;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .highway.wide {
+    height: 100px;
+  }
+
+  .highway-lines {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, #ffeb3b 0, #ffeb3b 20px, transparent 20px, transparent 40px);
+    transform: translateY(-50%);
+  }
+
+  .highway.wide .highway-lines:nth-child(2) {
+    top: 33%;
+  }
+  .highway.wide .highway-lines:nth-child(3) {
+    top: 66%;
+  }
+
+  .car {
+    width: 36px;
+    height: 22px;
+    border-radius: 4px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    animation: drive 4s linear infinite;
+  }
+
+  @keyframes drive {
+    from { left: -50px; }
+    to { left: calc(100% + 10px); }
+  }
+
+  .car:nth-child(2) { animation-delay: -1.5s; top: 20%; }
+  .car:nth-child(3) { animation-delay: -3s; top: 60%; }
+
+  .highway-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.1em;
+  }
+
+  .speed-meter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+  }
+
+  .meter-block {
+    flex: 1;
+    text-align: center;
+  }
+
+  .meter-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .meter-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  /* ─── BOTTOM-UP DIAGRAM ─── */
+  .layers-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .layer {
+    padding: 1.2rem 1.5rem;
+    border: 1px solid;
+    position: relative;
+    transition: transform 0.2s;
+  }
+
+  .layer:hover {
+    transform: translateX(6px);
+  }
+
+  .layer:first-child { border-radius: 8px 8px 0 0; }
+  .layer:last-child { border-radius: 0 0 8px 8px; }
+
+  .layer.layer-1 {
+    background: rgba(255,107,53,0.08);
+    border-color: rgba(255,107,53,0.4);
+  }
+  .layer.layer-2 {
+    background: rgba(255,193,7,0.06);
+    border-color: rgba(255,193,7,0.3);
+  }
+  .layer.layer-3 {
+    background: rgba(57,255,20,0.06);
+    border-color: rgba(57,255,20,0.3);
+  }
+
+  .layer-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .layer-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+  }
+
+  .layer-1 .layer-num { background: rgba(255,107,53,0.2); color: var(--accent2); }
+  .layer-2 .layer-num { background: rgba(255,193,7,0.2); color: #fbbf24; }
+  .layer-3 .layer-num { background: rgba(57,255,20,0.15); color: var(--accent3); }
+
+  .layer-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .layer-1 .layer-name { color: var(--accent2); }
+  .layer-2 .layer-name { color: #fbbf24; }
+  .layer-3 .layer-name { color: var(--accent3); }
+
+  .layer-checks {
+    list-style: none;
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding-left: 0.5rem;
+  }
+
+  .layer-checks li {
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .layer-checks li::before {
+    content: '→';
+    flex-shrink: 0;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .layer-1 .layer-checks li::before { color: var(--accent2); }
+  .layer-2 .layer-checks li::before { color: #fbbf24; }
+  .layer-3 .layer-checks li::before { color: var(--accent3); }
+
+  .cmd-block {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(57,255,20,0.2);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent3);
+    margin-top: 0.5rem;
+  }
+
+  .cmd-block .prompt { color: var(--muted); }
+
+  .apipa-box {
+    background: rgba(255,107,53,0.08);
+    border: 1px solid rgba(255,107,53,0.3);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    margin-top: 0.5rem;
+  }
+
+  .up-arrow {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--muted);
+    padding: 0.25rem 0;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* Separator */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2.5rem 0;
+  }
+
+  .note {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 0.75rem;
+    padding: 0.5rem 1rem;
+    border-left: 3px solid var(--border);
+  }
+
+  /* EMI visual */
+  .emi-visual {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--surface2);
+    border-radius: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cable-bundle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cable-pipe {
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+  }
+
+  .wire {
+    width: 14px;
+    height: 60px;
+    border-radius: 3px;
+  }
+
+  .wire.electric { background: linear-gradient(180deg, #ff6b35, #ff4500); }
+  .wire.utp { background: linear-gradient(180deg, #64748b, #94a3b8); }
+
+  .emi-waves {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .wave {
+    width: 20px;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent2), transparent);
+    opacity: 0.7;
+    animation: pulse-wave 1s ease-in-out infinite alternate;
+  }
+
+  .wave:nth-child(2) { animation-delay: 0.2s; width: 16px; }
+  .wave:nth-child(3) { animation-delay: 0.4s; width: 12px; }
+
+  @keyframes pulse-wave {
+    from { opacity: 0.3; }
+    to { opacity: 0.9; }
+  }
+
+  .arrow-big {
+    font-size: 2rem;
+    color: var(--muted);
+  }
+
+  .solution-node {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(0,212,255,0.05);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,212,255,0.1);
+  }
+
+  .solution-node .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .solution-node h3 { color: var(--accent); font-size: 1.1rem; margin-bottom: 0.25rem; }
+  .solution-node p { font-size: 0.75rem; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .protocol-grid, .comparison-grid { grid-template-columns: 1fr; }
+    .rj45-wrapper { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">// Taller de Ingeniería Aplicada N.º 1 — Diagramas Visuales</div>
+  <h1>Redes 1 — Visualización Técnica</h1>
+  <p class="sub">Stefania Quintero Varón &amp; Meily Nahome Durán Rodríguez · Docente: Gabriel Sánchez Suárez</p>
+</header>
+
+<!-- ════════════════════════════════════════
+     FASE 1 — ACTIVIDAD 1.1: INFRAESTRUCTURA
+     ════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">// Fase 1 · Actividad 1.1</div>
+  <h2>Infraestructura Actual vs. Solución Propuesta</h2>
+
+  <div class="card">
+    <div class="card-title">SITUACIÓN ACTUAL — Planta "Industrias del Acero S.A."</div>
+
+    <div class="emi-visual">
+      <div class="cable-bundle">
+        <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--accent2); margin-bottom: 0.25rem;">CABLES EN PARALELO</div>
+        <div class="cable-pipe">
+          <div class="wire electric" title="Cable eléctrico alta tensión"></div>
+          <div class="wire electric"></div>
+          <div class="wire utp"></div>
+          <div class="wire utp"></div>
+          <div class="emi-waves">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+          </div>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--muted); text-align: center; margin-top: 0.5rem;">
+          <span style="color: var(--accent2);">■</span> Alta tensión &nbsp;
+          <span style="color: #94a3b8;">■</span> UTP Cat 5e
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.75rem;">
+          <div class="warning-badge">⚠ 110 m &gt; 100 m límite</div>
+          <div class="warning-badge">⚠ EMI de motores</div>
+        </div>
+      </div>
+
+      <div class="arrow-big">→</div>
+
+      <div style="flex: 1; min-width: 180px;">
+        <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--accent2); margin-bottom: 0.75rem;">PROBLEMAS DETECTADOS</div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="padding: 0.75rem; background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.3); border-radius: 8px;">
+            <div style="color: var(--accent2); font-weight: 700; font-size: 0.85rem;">Límite 1: Distancia</div>
+            <div style="font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem;">Ethernet copper = máx. <strong style="color:var(--text);">100 m</strong><br>Actual: <strong style="color:var(--accent2);">110 m</strong> → Atenuación severa</div>
+          </div>
+          <div style="padding: 0.75rem; background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.3); border-radius: 8px;">
+            <div style="color: var(--accent2); font-weight: 700; font-size: 0.85rem;">Límite 2: Tipo de cable</div>
+            <div style="font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem;">UTP sin blindaje no es apto junto a cables de <strong style="color:var(--text);">alta tensión</strong></div>
+          </div>
+          <div style="padding: 0.75rem; background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.3); border-radius: 8px;">
+            <div style="color: var(--accent2); font-weight: 700; font-size: 0.85rem;">Fenómeno: EMI</div>
+            <div style="font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem;">Interferencia Electromagnética corrupta los bits transmitidos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow-big">→</div>
+
+      <div class="solution-node">
+        <div class="icon">💡</div>
+        <h3>Fibra Óptica</h3>
+        <p>Inmune a EMI<br>Sin límite de distancia eléctrica<br>Mayor ancho de banda</p>
+        <div class="success-badge" style="margin-top: 0.75rem;">✓ SOLUCIÓN ELEGIDA</div>
+      </div>
+    </div>
+
+    <div class="note">La fibra óptica transmite luz, no electricidad, por lo que los campos magnéticos de los motores no pueden corromper la señal.</div>
+  </div>
+
+  <!-- Cable comparison -->
+  <div class="card">
+    <div class="card-title">COMPARATIVA: STP vs FIBRA ÓPTICA</div>
+    <div class="comparison-grid">
+      <div class="comparison-card rejected">
+        <h3>🔌 Cable STP (Par Trenzado Blindado)</h3>
+        <ul>
+          <li>Reduce la EMI, pero no la elimina totalmente</li>
+          <li>Sigue limitado a 100 metros por norma Ethernet</li>
+          <li>Requiere puesta a tierra correcta del blindaje</li>
+          <li>En entornos industriales extremos puede fallar</li>
+        </ul>
+      </div>
+      <div class="comparison-card chosen">
+        <h3>🔦 Fibra Óptica Monomodo/Multimodo</h3>
+        <ul>
+          <li>Inmunidad total a interferencias electromagnéticas</li>
+          <li>Distancias de hasta varios kilómetros sin repetidor</li>
+          <li>No conduce electricidad → seguridad eléctrica</li>
+          <li>Mayor ancho de banda disponible</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════
+     FASE 1 — ACTIVIDAD 1.2: RJ-45 T568B
+     ════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">// Fase 1 · Actividad 1.2</div>
+  <h2>Diagrama de Colores — Conector RJ-45 Norma T568B</h2>
+
+  <div class="card">
+    <div class="rj45-wrapper">
+
+      <!-- Connector visual -->
+      <div class="connector-container">
+        <div class="connector-label">VISTA FRONTAL DEL CONECTOR</div>
+        <div class="connector-visual">
+          <div class="rj45-body">
+            <div class="pin-numbers">
+              <div class="pin-number-label">1</div>
+              <div class="pin-number-label">2</div>
+              <div class="pin-number-label">3</div>
+              <div class="pin-number-label">4</div>
+              <div class="pin-number-label">5</div>
+              <div class="pin-number-label">6</div>
+              <div class="pin-number-label">7</div>
+              <div class="pin-number-label">8</div>
+            </div>
+            <div class="pins-row">
+              <!-- T568B colors -->
+              <div class="pin-visual" style="background:linear-gradient(180deg,#ffffff,#f0a000);"></div><!-- B/W Orange -->
+              <div class="pin-visual" style="background:#ff8c00;"></div><!-- Orange -->
+              <div class="pin-visual" style="background:linear-gradient(180deg,#ffffff,#228b22);"></div><!-- B/W Green -->
+              <div class="pin-visual" style="background:#1565c0;"></div><!-- Blue -->
+              <div class="pin-visual" style="background:linear-gradient(180deg,#ffffff,#1565c0);"></div><!-- B/W Blue -->
+              <div class="pin-visual" style="background:#228b22;"></div><!-- Green -->
+              <div class="pin-visual" style="background:linear-gradient(180deg,#ffffff,#8b0000);"></div><!-- B/W Brown -->
+              <div class="pin-visual" style="background:#8b4513;"></div><!-- Brown -->
+            </div>
+            <div class="rj45-clip"></div>
+          </div>
+          <div class="front-label">↑ CLIP ABAJO · PINES ARRIBA</div>
+        </div>
+
+        <!-- Side view -->
+        <div class="connector-label" style="margin-top: 1.5rem;">SECUENCIA DE INSERCIÓN</div>
+        <div style="display: flex; gap: 3px; padding: 8px 12px; background: rgba(0,0,0,0.4); border-radius: 6px; border: 1px solid var(--border);">
+          <div style="text-align: center; width: 30px;">
+            <div style="width: 26px; height: 50px; border-radius: 3px; background:linear-gradient(180deg,#fff,#f0a000); border: 1px solid rgba(255,255,255,0.1);"></div>
+            <div style="font-size: 0.55rem; color: var(--muted); margin-top: 3px; font-family: 'Share Tech Mono', monospace;">1</div>
+          </div>
+          <div style="text-align: center; width: 30px;">
+            <div style="width: 26px; height: 50px; border-radius: 3px; background:#ff8c00; border: 1px solid rgba(255,255,255,0.1);"></div>
+            <div style="font-size: 0.55rem; color: var(--muted); margin-top: 3px; font-family: 'Share Tech Mono', monospace;">2</div>
+          </div>
+          <div style="text-align: center; width: 30px;">
+            <div style="width: 26px; height: 50px; border-radius: 3px; background:linear-gradient(180deg,#fff,#228b22); border: 1px solid rgba(255,255,255,0.1);"></div>
+            <div style="font-size: 0.55rem; color: var(--muted); margin-top: 3px; font-family: 'Share Tech Mono', monospace;">3</div>
+          </div>
+          <div style="text-align: center; width: 30px;">
+            <div style="width: 26px; height: 50px; border-radius: 3px; background:#1565c0; border: 1px solid rgba(255,255,255,0.1);"></div>
+            <div style="font-size: 0.55rem; color: var(--muted); margin-top: 3px; font-family: 'Share Tech Mono', monospace;">4</div>
+          </div>
+          <div style="text-align: center; width: 30px;">
+            <div style="width: 26px; height: 50px; border-radius: 3px; background:linear-gradient(180deg,#fff,#1565c0); border: 1px solid rgba(255,255,255,0.1);"></div>
+            <div style="font-size: 0.55rem; color: var(--muted); margin-top: 3px; font-family: 'Share Tech Mono', monospace;">5</div>
+          </div>
+          <div style="text-align: center; width: 30px;">
+            <div style="width: 26px; height: 50px; border-radius: 3px; background:#228b22; border: 1px solid rgba(255,255,255,0.1);"></div>
+            <div style="font-size: 0.55rem; color: var(--muted); margin-top: 3px; font-family: 'Share Tech Mono', monospace;">6</div>
+          </div>
+          <div style="text-align: center; width: 30px;">
+            <div style="width: 26px; height: 50px; border-radius: 3px; background:linear-gradient(180deg,#fff,#8b0000); border: 1px solid rgba(255,255,255,0.1);"></div>
+            <div style="font-size: 0.55rem; color: var(--muted); margin-top: 3px; font-family: 'Share Tech Mono', monospace;">7</div>
+          </div>
+          <div style="text-align: center; width: 30px;">
+            <div style="width: 26px; height: 50px; border-radius: 3px; background:#8b4513; border: 1px solid rgba(255,255,255,0.1);"></div>
+            <div style="font-size: 0.55rem; color: var(--muted); margin-top: 3px; font-family: 'Share Tech Mono', monospace;">8</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pin table -->
+      <div style="flex: 1; min-width: 280px;">
+        <table class="pin-table">
+          <thead>
+            <tr>
+              <th>Pin</th>
+              <th>Color</th>
+              <th>Par</th>
+              <th>Función</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pin-num">1</span></td>
+              <td>
+                <div class="color-cell">
+                  <span class="color-dot" style="background: linear-gradient(135deg, #fff 50%, #ff8c00 50%); border-color: #ff8c00;"></span>
+                  Blanco-Naranja
+                </div>
+              </td>
+              <td><span class="pair-badge">Par 2</span></td>
+              <td><span class="function-text">TX+ (Transmisión +)</span></td>
+            </tr>
+            <tr>
+              <td><span class="pin-num">2</span></td>
+              <td>
+                <div class="color-cell">
+                  <span class="color-dot" style="background: #ff8c00;"></span>
+                  Naranja
+                </div>
+              </td>
+              <td><span class="pair-badge">Par 2</span></td>
+              <td><span class="function-text">TX− (Transmisión −)</span></td>
+            </tr>
+            <tr>
+              <td><span class="pin-num">3</span></td>
+              <td>
+                <div class="color-cell">
+                  <span class="color-dot" style="background: linear-gradient(135deg, #fff 50%, #228b22 50%); border-color: #228b22;"></span>
+                  Blanco-Verde
+                </div>
+              </td>
+              <td><span class="pair-badge" style="color:#39ff14;border-color:rgba(57,255,20,0.3);">Par 3</span></td>
+              <td><span class="function-text">RX+ (Recepción +)</span></td>
+            </tr>
+            <tr>
+              <td><span class="pin-num">4</span></td>
+              <td>
+                <div class="color-cell">
+                  <span class="color-dot" style="background: #1565c0;"></span>
+                  Azul
+                </div>
+              </td>
+              <td><span class="pair-badge" style="color:#60a5fa;border-color:rgba(96,165,250,0.3);">Par 1</span></td>
+              <td><span class="function-text">Sin uso (PoE)</span></td>
+            </tr>
+            <tr>
+              <td><span class="pin-num">5</span></td>
+              <td>
+                <div class="color-cell">
+                  <span class="color-dot" style="background: linear-gradient(135deg, #fff 50%, #1565c0 50%); border-color: #1565c0;"></span>
+                  Blanco-Azul
+                </div>
+              </td>
+              <td><span class="pair-badge" style="color:#60a5fa;border-color:rgba(96,165,250,0.3);">Par 1</span></td>
+              <td><span class="function-text">Sin uso (PoE)</span></td>
+            </tr>
+            <tr>
+              <td><span class="pin-num">6</span></td>
+              <td>
+                <div class="color-cell">
+                  <span class="color-dot" style="background: #228b22;"></span>
+                  Verde
+                </div>
+              </td>
+              <td><span class="pair-badge" style="color:#39ff14;border-color:rgba(57,255,20,0.3);">Par 3</span></td>
+              <td><span class="function-text">RX− (Recepción −)</span></td>
+            </tr>
+            <tr>
+              <td><span class="pin-num">7</span></td>
+              <td>
+                <div class="color-cell">
+                  <span class="color-dot" style="background: linear-gradient(135deg, #fff 50%, #8b0000 50%); border-color: #8b0000;"></span>
+                  Blanco-Café
+                </div>
+              </td>
+              <td><span class="pair-badge" style="color:#d97706;border-color:rgba(217,119,6,0.3);">Par 4</span></td>
+              <td><span class="function-text">Sin uso (PoE)</span></td>
+            </tr>
+            <tr>
+              <td><span class="pin-num">8</span></td>
+              <td>
+                <div class="color-cell">
+                  <span class="color-dot" style="background: #8b4513;"></span>
+                  Café (Marrón)
+                </div>
+              </td>
+              <td><span class="pair-badge" style="color:#d97706;border-color:rgba(217,119,6,0.3);">Par 4</span></td>
+              <td><span class="function-text">Sin uso (PoE)</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top: 1.25rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(167,139,250,0.2);">
+          <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: #a78bfa; margin-bottom: 0.5rem;">DIAFONÍA (CROSSTALK)</div>
+          <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.5;">El trenzado de los pares cancela las interferencias mutuas entre hilos adyacentes. Separar los cables del trenzado más de <strong style="color: var(--text);">13 mm</strong> antes del conector genera diafonía y degrada la señal. Los pares deben mantenerse trenzados hasta el último milímetro posible.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════
+     FASE 2 — ACTIVIDAD 2.1: TCP vs UDP
+     ════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">// Fase 2 · Actividad 2.1</div>
+  <h2>Selección de Protocolo de Transporte — Capa 4</h2>
+
+  <div class="card">
+    <div class="protocol-grid">
+
+      <!-- UDP Card -->
+      <div class="protocol-card udp">
+        <div class="protocol-name">UDP</div>
+        <div style="color: #a78bfa; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">📷 Cámaras de Seguridad (Video 4K)</div>
+        <div class="protocol-use-case">User Datagram Protocol — Sin conexión</div>
+
+        <div style="font-size: 0.8rem; margin-bottom: 0.75rem; color: var(--muted);">Flujo de paquetes de video:</div>
+        <div class="packet-flow">
+          <div class="packet sent">PKT #1 — Frame de video</div>
+          <div class="packet sent">PKT #2 — Frame de video</div>
+          <div class="packet lost">PKT #3 — PERDIDO ✗ (no se retransmite)</div>
+          <div class="packet sent">PKT #4 — Frame de video → continúa</div>
+          <div class="packet sent">PKT #5 — Frame de video</div>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid rgba(167,139,250,0.2); padding-top: 0.75rem;">
+          <span style="color: #a78bfa;">✓</span> El video fluye en tiempo real aunque haya pixelación puntual.<br>
+          <span style="color: #a78bfa;">✓</span> No hay retransmisión → sin congelamiento de imagen.<br>
+          <span style="color: var(--accent2);">!</span> Más importante: fluidez que perfección.
+        </div>
+      </div>
+
+      <!-- TCP Card -->
+      <div class="protocol-card tcp">
+        <div class="protocol-name">TCP</div>
+        <div style="color: var(--accent); font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">🤖 Control de Robot Industrial</div>
+        <div class="protocol-use-case">Transmission Control Protocol — Con garantía</div>
+
+        <div style="font-size: 0.8rem; margin-bottom: 0.75rem; color: var(--muted);">Flujo de instrucción crítica:</div>
+        <div class="packet-flow">
+          <div class="packet acked">PKT #1 — "DETENER" → ACK ✓</div>
+          <div class="packet lost">PKT #2 — "DETENER" → PÉRDIDA</div>
+          <div class="flow-arrow">↓ TCP detecta pérdida → retransmite</div>
+          <div class="packet retx">PKT #2 — "DETENER" [RETRANSMISIÓN] → ACK ✓</div>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid rgba(0,212,255,0.2); padding-top: 0.75rem;">
+          <span style="color: var(--accent);">✓</span> Garantiza entrega de la instrucción sí o sí.<br>
+          <span style="color: var(--accent);">✓</span> Confirmación (ACK) de recepción.<br>
+          <span style="color: var(--accent);">✓</span> Retransmisión automática si hay pérdida.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════
+     FASE 2 — ACTIVIDAD 2.2: LATENCY vs BW
+     ════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">// Fase 2 · Actividad 2.2</div>
+  <h2>Latencia vs. Ancho de Banda — Analogía de la Autopista</h2>
+
+  <div class="card">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; flex-wrap: wrap;">
+
+      <div class="highway-diagram">
+        <div class="highway-label">AUTOPISTA ANGOSTA (100 Mbps) — LATENCIA BAJA</div>
+        <div class="highway">
+          <div class="highway-lines"></div>
+          <div class="car" style="font-size: 1rem; top: 30%; animation-duration: 2s;">🚗</div>
+        </div>
+        <div style="padding: 0.75rem; background: rgba(57,255,20,0.06); border-radius: 6px; border: 1px solid rgba(57,255,20,0.2);">
+          <div style="color: var(--accent3); font-size: 0.8rem; font-weight: 600;">→ El carro llega RÁPIDO</div>
+          <div style="color: var(--muted); font-size: 0.75rem; margin-top: 0.25rem;">Latencia baja = instrucción llega al robot en milisegundos</div>
+        </div>
+      </div>
+
+      <div class="highway-diagram">
+        <div class="highway-label">AUTOPISTA ANCHA (1 Gbps) — MISMA LATENCIA</div>
+        <div class="highway wide">
+          <div class="highway-lines"></div>
+          <div class="highway-lines" style="top: 33%;"></div>
+          <div class="highway-lines" style="top: 66%;"></div>
+          <div class="car" style="font-size: 0.9rem; top: 10%; animation-duration: 2s;">🚗</div>
+          <div class="car" style="font-size: 0.9rem; top: 40%; animation-duration: 2s; animation-delay: -0.7s;">🚗</div>
+          <div class="car" style="font-size: 0.9rem; top: 65%; animation-duration: 2s; animation-delay: -1.4s;">🚗</div>
+        </div>
+        <div style="padding: 0.75rem; background: rgba(255,107,53,0.08); border-radius: 6px; border: 1px solid rgba(255,107,53,0.3);">
+          <div style="color: var(--accent2); font-size: 0.8rem; font-weight: 600;">→ Más carros, igual velocidad individual</div>
+          <div style="color: var(--muted); font-size: 0.75rem; margin-top: 0.25rem;">El robot no responde más rápido — la latencia no cambió</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="speed-meter">
+      <div class="meter-block">
+        <div class="meter-value" style="color: var(--accent);">BW</div>
+        <div class="meter-label">Ancho de Banda<br>= Carriles de la autopista<br>= Cuántos datos simultáneos</div>
+      </div>
+      <div style="color: var(--muted); font-size: 2rem;">≠</div>
+      <div class="meter-block">
+        <div class="meter-value" style="color: var(--accent3);">RTT</div>
+        <div class="meter-label">Latencia / Round Trip Time<br>= Velocidad de un solo carro<br>= Tiempo de respuesta del robot</div>
+      </div>
+      <div style="color: var(--accent2); font-size: 1.5rem; flex-shrink: 0;">⚠</div>
+      <div class="meter-block" style="background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.2); border-radius: 8px; padding: 0.75rem;">
+        <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--accent2);">PARA EL ROBOT:</div>
+        <div style="font-size: 0.85rem; color: var(--text); margin-top: 0.25rem; font-weight: 600;">Latencia baja &gt; Ancho de banda alto</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════
+     FASE 3 — BOTTOM-UP TROUBLESHOOTING
+     ════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">// Fase 3 · Actividad 3.1</div>
+  <h2>Metodología Bottom-Up — Diagnóstico de Red</h2>
+
+  <div class="card">
+    <div class="card-title">CHECKLIST DE DIAGNÓSTICO — Oficina Administrativa sin Internet</div>
+
+    <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+      <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--muted); text-align: center;">
+        ↑ CAPAS SUPERIORES (si las inferiores están OK)<br>
+        <span style="color: var(--accent);">═══════════════════</span>
+      </div>
+    </div>
+
+    <div class="layers-stack">
+
+      <div class="layer layer-3">
+        <div class="layer-header">
+          <span class="layer-num">PASO 3</span>
+          <span class="layer-name">Capa 3 — Red (Network)</span>
+        </div>
+        <ul class="layer-checks">
+          <li>Ejecutar comando para ver dirección IP:</li>
+        </ul>
+        <div class="cmd-block">
+          <span class="prompt">C:\&gt; </span>ipconfig <span style="color: var(--muted);">&nbsp;&nbsp;&nbsp;&nbsp;# Windows</span><br>
+          <span class="prompt">$ </span>ip addr &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--muted);">&nbsp;&nbsp;&nbsp;# Linux/Mac</span>
+        </div>
+        <div class="apipa-box" style="margin-top: 0.5rem;">
+          ⚠ Si la IP es <strong>169.254.x.x</strong> → Error en servidor DHCP o Router<br>
+          <span style="font-size: 0.7rem; color: var(--muted);">(APIPA: el PC no pudo obtener IP automática)</span>
+        </div>
+        <div style="margin-top: 0.5rem; background: rgba(57,255,20,0.05); border: 1px solid rgba(57,255,20,0.2); border-radius: 6px; padding: 0.6rem 1rem; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem;">
+          <span style="color: var(--accent3);">$</span> ping 8.8.8.8
+          <div style="color: var(--muted); font-size: 0.7rem; margin-top: 0.3rem;">→ Si responde: Capas 1, 2 y 3 funcionan correctamente ✓</div>
+        </div>
+      </div>
+
+      <div class="up-arrow">↑ Si Paso 2 OK → subir</div>
+
+      <div class="layer layer-2">
+        <div class="layer-header">
+          <span class="layer-num">PASO 2</span>
+          <span class="layer-name">Capa 2 — Enlace (Data Link)</span>
+        </div>
+        <ul class="layer-checks">
+          <li>Hay luz verde en el puerto del switch → hay señal física</li>
+          <li>Verificar configuración de VLANs en el switch</li>
+          <li>Revisar tabla de direcciones MAC del dispositivo</li>
+          <li>Confirmar que el PC esté en la VLAN correcta</li>
+        </ul>
+      </div>
+
+      <div class="up-arrow">↑ Si Paso 1 OK → subir</div>
+
+      <div class="layer layer-1">
+        <div class="layer-header">
+          <span class="layer-num">PASO 1</span>
+          <span class="layer-name">Capa 1 — Física (Physical) ← PRIMERO</span>
+        </div>
+        <ul class="layer-checks">
+          <li>Revisar luces LED de la tarjeta de red (Link/Activity)</li>
+          <li>Inspeccionar el cable: ¿está correctamente conectado? ¿doblado o roto?</li>
+          <li>Verificar que el conector RJ-45 no esté dañado o oxidado</li>
+          <li>Probar con otro cable o puerto del switch</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+      <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--muted); text-align: center;">
+        <span style="color: var(--accent2);">═══════════════════</span><br>
+        ↓ SIEMPRE SE EMPIEZA AQUÍ (Capa Física)
+      </div>
+    </div>
+
+    <div class="note" style="margin-top: 1.25rem;">La metodología Bottom-Up garantiza no saltar capas: un error en la Capa 1 puede hacer que la Capa 3 parezca el problema cuando en realidad solo hay un cable suelto.</div>
+  </div>
+</div>
+
+<footer style="text-align: center; padding: 2rem 0 1rem; color: var(--muted); font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; border-top: 1px solid var(--border);">
+  TALLER G-2 · REDES 1 · NORMA T568B · METODOLOGÍA BOTTOM-UP
+</footer>
+
+</body>
+</html>
